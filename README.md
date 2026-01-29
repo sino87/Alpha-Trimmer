@@ -1,35 +1,29 @@
-<h1 align="center">
-<sub>
-<img width="38" src="https://github.com/user-attachments/assets/664eaad4-b13a-4f76-922a-401beaa6c2c6"
-" />
-</sub>
-Alpha Trimmer
-</h1>
+# Alpha Trimmer
 
-| [English](#english) | [Japanese](#japanese) |
-| :---: | :---: |
-| Alpha Trimmer is a Windows tool that automatically trims excess transparent areas from PNG and WebP images via the context menu (right-click menu). | Windowsのコンテキストメニュー(右クリックメニュー)から、PNGおよびWebP画像の余分な透明部分を自動的にトリミングできるツールです。 |
+[English](#english) | [日本語](#japanese)
 
 <a name="english"></a>
 ## English
 
+A Windows tool that automatically trims excess transparent areas from PNG and WebP images via the context menu.
+
 ### Features
 
-- **Easy to use**
-- **Non-destructive**: The original image is not overwritten; it is automatically saved with a new name (e.g., `image-1.png`).
-- **Batch processing**: You can select multiple images and process them at once.
-- **Supports PNG and WebP**
+- Simply right-click an image file and select "Trim Transparency" to use.
+- The original image is preserved, and the trimmed version is automatically saved with a new name (e.g., `image-1.png`).
+- Multiple images can be selected and processed at once.
+- Supports both PNG and WebP formats.
 
 ### Installation
 
-1. Download the installer (`Alpha_Trimmer_Setup.exe`) from [Releases]([https://github.com/YOUR_USERNAME/AlphaTrimmer/releases](https://github.com/tatsuya087/Alpha-Trimmer/releases)).
+1. Download the installer `Alpha_Trimmer_Setup.exe` from [Releases](https://github.com/YOUR_USERNAME/AlphaTrimmer/releases).
 2. Run the installer and follow the on-screen instructions.
 
 ### Usage
 
-1. Select the PNG or WebP image(s) you want to trim (multiple selection supported).
+1. Select the PNG or WebP image(s) you want to trim.
 2. Right-click to open the context menu.
-3. Click **"Trim Transparency"**.
+3. Click "Trim Transparency".
 4. The trimmed image(s) will be saved in the same folder.
 
 ### For Developers
@@ -41,15 +35,15 @@ Alpha Trimmer
 
 #### Build Instructions
 
-Install required libraries:
+Install required libraries
 ```bash
 pip install Pillow PyInstaller
 ```
 
-Build executable:
+Build executable
 Run `build_alpha_trimmer.bat`
 
-Create Installer:
+Create Installer
 Compile `Installer/setup_alpha_trimmer.iss` using Inno Setup.
 
 ---
@@ -57,22 +51,25 @@ Compile `Installer/setup_alpha_trimmer.iss` using Inno Setup.
 <a name="japanese"></a>
 ## 日本語
 
+Windowsの右クリックメニューから、PNGおよびWebP画像の余分な透明部分を自動的にトリミングするツールです。
+
 ### 機能
 
-- **非破壊編集**: 元の画像は上書きせず、自動的に別名（例: `image-1.png`）で保存します。
-- 複数の画像を選択してまとめて処理できます。
-- **PNG / WebP 対応**
+- 画像ファイルを右クリックして「透明部分をトリミング」を選ぶだけで使えます。
+- 元の画像は上書きされず、自動的に別名（例: `image-1.png`）で保存されます。
+- 複数の画像を選択して一度に処理することも可能です。
+- PNGとWebPの両方の形式に対応しています。
 
 ### インストール方法
 
-1. [Releases]([https://github.com/YOUR_USERNAME/AlphaTrimmer/releases](https://github.com/tatsuya087/Alpha-Trimmer/releases)) からインストーラー (`Alpha_Trimmer_Setup.exe`) をダウンロードします。
+1. [Releases](https://github.com/YOUR_USERNAME/AlphaTrimmer/releases) からインストーラー `Alpha_Trimmer_Setup.exe` をダウンロードします。
 2. インストーラーを実行し、画面の指示に従ってインストールしてください。
 
 ### 使い方
 
-1. トリミングしたいPNGまたはWebP画像を選択します（複数選択可）。
-2. 右クリックしてコンテキストメニューを開きます。
-3. **「透明部分をトリミング」** をクリックします。
+1. トリミングしたいPNGまたはWebP画像を選択します。
+2. 右クリックしてメニューを開きます。
+3. 「透明部分をトリミング」をクリックします。
 4. 同じフォルダにトリミングされた画像が保存されます。
 
 ### 開発者向け情報
@@ -84,13 +81,13 @@ Compile `Installer/setup_alpha_trimmer.iss` using Inno Setup.
 
 #### ビルド方法
 
-必要なライブラリをインストール:
+必要なライブラリのインストール
 ```bash
 pip install Pillow PyInstaller
 ```
 
-exe化:
+exe化
 `build_alpha_trimmer.bat` を実行
 
-インストーラー作成:
+インストーラー作成
 Inno Setup で `Installer/setup_alpha_trimmer.iss` をコンパイル
