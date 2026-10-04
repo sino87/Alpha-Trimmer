@@ -2,7 +2,7 @@
 
 [日本語](README.ja.md)
 
-Crop transparent borders from PNG and WebP images on Windows. Process multiple images through the context menu or GUI.
+A Windows tool for trimming transparent margins from PNG and WebP images. Process multiple images at once using the `Context Menu` or `GUI`.
 
 > I made this because opening Photoshop every time was a hassle.
 This free tool lets you use Photoshop's `Trim Transparent Pixels` feature with one click.
