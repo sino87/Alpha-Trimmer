@@ -2,55 +2,75 @@
 
 [日本語](DEVELOPMENT.ja.md) · [README](../README.md) · [Localization](../localization/README.md)
 
-The app uses C# and WPF. The shell extension uses C++. Run commands from the repository root.
+The app uses C# and WPF; the context menu extension uses C++. Build and test on Windows x64. The distributed app supports Windows 11 x64.
 
-Build and test on Windows x64. The distributed app targets Windows 11 x64.
+---
+
+Run the following commands from the repository root.
 
 ## Requirements
 
 | Tool | Requirement |
 | --- | --- |
 | .NET SDK | Version specified in `global.json` |
-| .NET Desktop Runtime | .NET 8 x64, required for GUI tests |
+| .NET Desktop Runtime | 8 x64, for GUI tests |
 | Visual Studio 2022 | C++ x64 build tools |
 | Windows SDK | C++ headers and libraries |
 | Inno Setup | 6.3 or later |
-| PowerShell | Save scripts containing Japanese as UTF-8 with BOM |
+| PowerShell | Tested with Windows PowerShell 5.1 |
 
-Verified with .NET SDK 9.0.310, Inno Setup 6.6.1, and Windows PowerShell 5.1.
+Save PowerShell scripts containing Japanese as UTF-8 with BOM.
+
+---
 
 ## Build
 
 ```powershell
 .\scripts\Build.ps1
+.\scripts\Test-Shell.ps1
 ```
 
-This generates localization files, runs the release, localization, installer, Core, and UI tests, and builds the app, shell DLL, and installer. The .NET runtime is bundled.
+`Build.ps1` generates localization files, runs tests, then builds the app, shell DLL, and installer. The installer includes the .NET runtime.
 
-After building, run `.\scripts\Test-Shell.ps1` to test the shell extension. GitHub Actions runs both commands.
+`Test-Shell.ps1` tests image processing through the context menu extension. GitHub Actions runs both commands.
 
 | Output | Location |
 | --- | --- |
 | Installer | `Installer/output/Alpha_Trimmer_Setup-v<version>.exe` |
 | App | `artifacts/app/` |
 
-The installer stores the shell DLL under a filename containing its SHA-256 hash. It excludes shell DLLs from automatic application closing and reuses identical files without overwriting them. Changing an existing shell registration prompts for a Windows restart. Old DLLs still in use are kept until a later installation can remove them.
+Shell DLL filenames include their SHA-256 hash; identical files are not overwritten. Shell DLLs are excluded from automatic application closing. Changing the registered DLL path prompts for a Windows restart. Later installations attempt to remove old DLLs that are still in use.
+
+---
+
+## Version updates
+
+Change `<Version>` in `Directory.Build.props`. The app, installer, and Windows manifest share this value.
+
+Write changes in English in `CHANGELOG.md` and Japanese in `CHANGELOG.ja.md`.
+
+---
 
 ## GitHub Actions
 
-Pushes and pull requests trigger tests and builds automatically.
+Pushes and pull requests trigger tests and builds. Changes limited to READMEs or `docs/` skip these checks. Changelogs and files bundled with the installer remain covered.
 
-To prepare a release, open **Prepare release** in Actions, select **Run workflow**, and choose `main`. A successful run attaches the installer, SHA-256 checksums, and a provenance attestation to a draft release. Review the draft before publishing.
+Releases are prepared manually.
 
-Update only `<Version>` in `Directory.Build.props` to change the version. The app, installer, and Windows manifest use this value automatically. Add release notes to `CHANGELOG.md` and `CHANGELOG.ja.md`. A draft can be updated from the same commit. The workflow stops if the version is already published or its tag points to a different commit.
+1. In Actions, open **Prepare release** → **Run workflow**, select `main`, and run it.
+2. Review and publish the draft release.
 
-Verify the installer's provenance with GitHub CLI:
+Each manual run performs all tests and builds, then attaches the installer, SHA-256 checksums, and a provenance attestation to the draft.
 
-Use the filename of the downloaded installer. For v2.0.0:
+A draft can be updated from the same commit. The workflow stops if the version is already published or its tag points to a different commit.
+
+Verify the installer's provenance with GitHub CLI. Use the filename of the downloaded installer.
 
 ```powershell
 gh attestation verify Alpha_Trimmer_Setup-v2.0.0.exe --repo sino87/Alpha-Trimmer
 ```
+
+---
 
 ## Run
 
@@ -60,6 +80,8 @@ gh attestation verify Alpha_Trimmer_Setup-v2.0.0.exe --repo sino87/Alpha-Trimmer
 ```
 
 Run without arguments to open the GUI. Pass image paths to process them immediately.
+
+---
 
 ## Tests
 
@@ -75,21 +97,27 @@ dotnet run --project tests/AlphaTrimmer.UiTests -c Release -- artifacts/gui-test
 | Test | Coverage |
 | --- | --- |
 | Core | Image processing and settings |
-| UI | Actual WPF windows and rendered screenshots |
-| Installer | Inno Setup migration and shell restart conditions; does not install the app |
-| Localization | Adding languages, fallback, and validation of translated strings |
-| Shell | Passing multiple images from the DLL to the published EXE; excludes registry registration and Explorer display |
-| Release | Versions, release notes, and rules for updating tags and releases |
+| UI | WPF window behavior and rendering |
+| Installer | Migration from earlier versions and restart conditions for DLL updates |
+| Localization | Adding languages, fallback, and invalid strings |
+| Shell | Passing multiple images from the DLL to the distributed EXE |
+| Release | Versions, changelogs, and rules for updating tags and releases |
 
-Run `Build.ps1` before `Test-Shell.ps1`; the shell test uses the DLL and EXE in `artifacts/app/`.
+Shell tests require the built DLL and EXE. Run `Build.ps1` first.
+
+Automated tests do not cover actual installation, registry registration, or menu display in Explorer.
 
 Tests do not require Python. To regenerate image fixtures, use Pillow and `tests/generate_fixtures.py`.
 
-Check dependencies for known vulnerabilities:
+---
+
+Check dependencies for known vulnerabilities with this command.
 
 ```powershell
 dotnet list src/AlphaTrimmer.App/AlphaTrimmer.App.csproj package --vulnerable --include-transitive
 ```
+
+---
 
 ## References
 

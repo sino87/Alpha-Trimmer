@@ -11,9 +11,13 @@ Photoshopの `透明ピクセルでトリミング` をワンクリックで行�
 | --- | --- |
 | Windows 11 x64 | PNG・WebPの静止画 |
 
+---
+
 ## インストール
 
 [リリースページ](https://github.com/sino87/Alpha-Trimmer/releases)からインストーラーをダウンロードして実行します。
+
+---
 
 ## 使い方
 
@@ -30,6 +34,8 @@ https://github.com/user-attachments/assets/b457c35c-4ac3-4aa6-8302-d5883ee0f63a
 
 保存先の変更、サブフォルダーの検索、失敗した画像の再処理にも対応しています。 `設定` では日本語・英語とライト・ダークを切り替えられます。
 ![Alpha Trimmerの画面](docs/images/gui-ja.png)
+
+---
 
 ## ライセンス
 

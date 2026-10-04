@@ -2,55 +2,75 @@
 
 [English](DEVELOPMENT.md) · [README](../README.ja.md) · [翻訳](../localization/README.ja.md)
 
-アプリはC#・WPF、シェル拡張はC++で実装しています。コマンドはリポジトリのルートで実行します。
+アプリはC#・WPF、右クリックメニューの拡張はC++製です。ビルド・テストはWindows x64で行います。配布版はWindows 11 x64対応です。
 
-ビルド・テストはWindows x64で行います。配布版の動作環境はWindows 11 x64です。
+---
+
+以下のコマンドは、リポジトリのルートで実行します。
 
 ## 必要な環境
 
 | ツール | 条件 |
 | --- | --- |
-| .NET SDK | `global.json`で指定したバージョン |
-| .NET Desktop Runtime | .NET 8 x64。GUIテストに必要 |
+| .NET SDK | `global.json`の指定バージョン |
+| .NET Desktop Runtime | 8 x64。GUIテスト用 |
 | Visual Studio 2022 | C++ x64ビルドツール |
 | Windows SDK | C++ヘッダーとライブラリ |
 | Inno Setup | 6.3以降 |
-| PowerShell | 日本語を含むスクリプトはUTF-8 BOM付きで保存 |
+| PowerShell | 検証済みはWindows PowerShell 5.1 |
 
-検証環境は.NET SDK 9.0.310、Inno Setup 6.6.1、Windows PowerShell 5.1です。
+日本語を含むPowerShellスクリプトは、UTF-8 BOM付きで保存します。
+
+---
 
 ## ビルド
 
 ```powershell
 .\scripts\Build.ps1
+.\scripts\Test-Shell.ps1
 ```
 
-翻訳ファイルを生成し、Release・Localization・Installer・Core・UIのテストを実行します。その後、アプリ・シェルDLL・インストーラーをビルドします。.NETランタイムは同梱します。
+`Build.ps1`で翻訳ファイルを生成し、テスト後にアプリ・シェルDLL・インストーラーを作成します。インストーラーには.NETランタイムも同梱します。
 
-ビルド後に`.\scripts\Test-Shell.ps1`でシェル拡張を検証します。GitHub Actionsでは両方を実行します。
+`Test-Shell.ps1`で右クリックメニューからの画像処理をテストします。GitHub Actionsでもこの2つを実行します。
 
 | 出力 | 保存先 |
 | --- | --- |
 | インストーラー | `Installer/output/Alpha_Trimmer_Setup-v<version>.exe` |
 | アプリ | `artifacts/app/` |
 
-インストーラーはシェルDLLをSHA-256付きのファイル名で配置し、自動終了の対象から除外します。同じ内容のDLLは上書きしません。既存の登録先が変わる場合はWindowsの再起動を案内します。使用中の旧DLLは残し、後のインストール時に削除を試みます。
+シェルDLLのファイル名にはSHA-256を付け、同じ内容なら上書きを省略します。DLLは自動終了の対象から除外し、登録先が変わる場合はWindowsの再起動を案内します。使用中の旧DLLは、次回以降のインストールで削除を試みます。
+
+---
+
+## バージョン更新
+
+`Directory.Build.props`の`<Version>`を変更します。アプリ・インストーラー・Windows用マニフェストに共通で使われます。
+
+変更内容は`CHANGELOG.md`に英語、`CHANGELOG.ja.md`に日本語で記載します。
+
+---
 
 ## GitHub Actions
 
-ブランチへの更新とPRで、テスト・ビルドを自動実行します。
+push・PRでテストとビルドを実行します。READMEや`docs/`だけの変更は省略します。変更履歴やインストーラーの同梱ファイルはテスト対象です。
 
-リリースはActionsの「Prepare release」→「Run workflow」で、`main`を選んで実行します。成功するとインストーラー・SHA-256・出所の証明をリリース下書きに添付します。内容を確認してから公開してください。
+リリースは手動で行います。
 
-バージョンは`Directory.Build.props`の`<Version>`だけを更新します。アプリ・インストーラー・Windows用マニフェストへ自動反映します。`CHANGELOG.md`には英語、`CHANGELOG.ja.md`には日本語の変更内容を記載します。同じコミットなら下書きを更新できます。公開済みのバージョン、または既存タグと異なるコミットでは停止します。
+1. Actionsで「Prepare release」→「Run workflow」を開き、`main`を選んで実行します。
+2. リリース下書きの内容を確認して公開します。
 
-配布ファイルの出所はGitHub CLIで確認できます。
+手動実行では毎回すべてのテストとビルドを行い、インストーラー・SHA-256・出所の証明を下書きに添付します。
 
-ファイル名はダウンロードしたインストーラーに合わせます。v2.0.0の場合は次のとおりです。
+同じコミットの下書きは更新できます。公開済みのバージョンや、既存タグと異なるコミットでは停止します。
+
+配布元の確認にはGitHub CLIを使います。ファイル名はダウンロードしたものに合わせてください。
 
 ```powershell
 gh attestation verify Alpha_Trimmer_Setup-v2.0.0.exe --repo sino87/Alpha-Trimmer
 ```
+
+---
 
 ## 起動
 
@@ -59,7 +79,9 @@ gh attestation verify Alpha_Trimmer_Setup-v2.0.0.exe --repo sino87/Alpha-Trimmer
 & .\artifacts\app\alpha_trimmer.exe 'C:\画像\sample.png' 'C:\画像\sample.webp'
 ```
 
-引数なしでGUI、画像パスを渡すとその場で処理します。
+引数なしならGUIが開きます。画像パスを渡すと、その場で処理します。
+
+---
 
 ## テスト
 
@@ -75,21 +97,26 @@ dotnet run --project tests/AlphaTrimmer.UiTests -c Release -- artifacts/gui-test
 | テスト | 対象 |
 | --- | --- |
 | Core | 画像処理・設定 |
-| UI | 実際のWPF画面と描画画像 |
-| Installer | Inno Setupの移行条件・シェル更新時の再起動条件。インストールは行わない |
-| Localization | 言語追加・未翻訳時の代替言語・不正文言の検出 |
-| Shell | DLLから配布用EXEへの複数画像受け渡し。レジストリ登録・Explorer表示は対象外 |
-| Release | バージョン・変更履歴の整合性と、タグ・リリースの更新条件 |
+| UI | WPF画面の動作・描画 |
+| Installer | 旧版からの移行・DLL更新時の再起動条件 |
+| Localization | 言語追加・未翻訳時の表示・不正な文言 |
+| Shell | DLLから配布用EXEへの複数画像の受け渡し |
+| Release | バージョン・変更履歴・タグ・リリースの更新条件 |
 
-`Test-Shell.ps1`は`artifacts/app/`のDLLとEXEを使うため、先に`Build.ps1`を実行してください。
+Shellテストにはビルド済みのDLLとEXEが必要です。先に`Build.ps1`を実行してください。
 
-通常のテストにPythonは不要です。画像の再生成にはPillowと`tests/generate_fixtures.py`を使います。
+実際のインストール、レジストリ登録、Explorerのメニュー表示は自動テストの対象外です。
 
-依存パッケージの脆弱性照会は次のコマンドで行います。
+通常のテストにPythonは不要です。テスト画像を作り直す場合は、Pillowと`tests/generate_fixtures.py`を使います。
+
+---
+
+依存パッケージの脆弱性を確認するコマンドです。
 
 ```powershell
 dotnet list src/AlphaTrimmer.App/AlphaTrimmer.App.csproj package --vulnerable --include-transitive
 ```
+---
 
 ## 参考資料
 

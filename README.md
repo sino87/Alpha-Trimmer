@@ -11,9 +11,13 @@ This free tool lets you use Photoshop's `Trim Transparent Pixels` feature with o
 | --- | --- |
 | Windows 11 x64 | Static PNG and WebP |
 
+---
+
 ## Installation
 
 Download and run the installer from [Releases](https://github.com/sino87/Alpha-Trimmer/releases).
+
+---
 
 ## Usage
 
@@ -31,6 +35,8 @@ https://github.com/user-attachments/assets/b457c35c-4ac3-4aa6-8302-d5883ee0f63a
 You can change the output folder, include subfolders, and retry failed images. `Settings` lets you switch between Japanese and English, and light and dark themes.
 
 ![Alpha Trimmer window](docs/images/gui-en.png)
+
+---
 
 ## License
 
