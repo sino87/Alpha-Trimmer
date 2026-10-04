@@ -21,7 +21,7 @@ Photoshopの `透明ピクセルでトリミング` をワンクリックで行�
 
 画像を選択し、右クリック → `その他のオプションを確認` → `透明ピクセルをトリミング` を選びます。
 
-[使い方の動画](docs/images/tut-1.mp4)
+https://github.com/user-attachments/assets/b457c35c-4ac3-4aa6-8302-d5883ee0f63a
 
 ### GUI
 
