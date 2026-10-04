@@ -1,0 +1,112 @@
+name: Prepare release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prepare-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Check branch
+        env:
+          SELECTED_REF: ${{ github.ref }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          if ($env:SELECTED_REF -ne 'refs/heads/main' -or $env:DEFAULT_BRANCH -ne 'main') {
+            throw '既定ブランチのmainから実行してください。'
+          }
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Check release conditions
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_REPOSITORY: ${{ github.repository }}
+          RELEASE_COMMIT: ${{ github.sha }}
+        run: ./scripts/Publish-DraftRelease.ps1 -Repository $env:RELEASE_REPOSITORY -Commit $env:RELEASE_COMMIT -CheckOnly
+      - name: Set up .NET
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          global-json-file: global.json
+          dotnet-version: 8.0.x
+      - name: Build and test
+        run: |
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          & ./scripts/Build.ps1 *>&1 | Tee-Object artifacts/build.log
+          & ./scripts/Test-Shell.ps1 *>&1 | Tee-Object artifacts/shell.log
+      - name: Prepare files
+        run: |
+          New-Item -ItemType Directory -Force artifacts/release | Out-Null
+          Copy-Item Installer/output/Alpha_Trimmer_Setup.exe artifacts/release/
+          $hash = (Get-FileHash artifacts/release/Alpha_Trimmer_Setup.exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          [IO.File]::WriteAllText((Join-Path $PWD 'artifacts/release/SHA256SUMS.txt'), "$hash  Alpha_Trimmer_Setup.exe`n", [Text.UTF8Encoding]::new($false))
+      - name: Attest installer provenance
+        id: attest
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
+        with:
+          subject-path: artifacts/release/Alpha_Trimmer_Setup.exe
+      - name: Save provenance bundle
+        env:
+          BUNDLE_PATH: ${{ steps.attest.outputs.bundle-path }}
+        run: Copy-Item -LiteralPath $env:BUNDLE_PATH -Destination artifacts/release/provenance.sigstore.json
+      - name: Save release files
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-files
+          path: artifacts/release/*
+          if-no-files-found: error
+          retention-days: 30
+      - name: Save test results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-test-results
+          path: |
+            artifacts/*.log
+            artifacts/gui-tests/
+            artifacts/localization-tests-*/
+            artifacts/installer-policy-*/
+            artifacts/shell-smoke*/
+            artifacts/release-tests-*/
+          retention-days: 14
+  draft:
+    needs: build
+    runs-on: windows-2022
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Download release files
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: release-files
+          path: artifacts/release
+      - name: Update release draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_REPOSITORY: ${{ github.repository }}
+          RELEASE_COMMIT: ${{ github.sha }}
+        run: ./scripts/Publish-DraftRelease.ps1 -Repository $env:RELEASE_REPOSITORY -Commit $env:RELEASE_COMMIT

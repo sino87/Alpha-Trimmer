@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <EmbeddedResource Include="../../localization/*.json" LogicalName="AlphaTrimmer.Localization.%(Filename).json" />
+    <InternalsVisibleTo Include="AlphaTrimmer.Tests" />
+    <PackageReference Include="Magick.NET-Q16-x64" Version="14.17.2" />
+  </ItemGroup>
+</Project>

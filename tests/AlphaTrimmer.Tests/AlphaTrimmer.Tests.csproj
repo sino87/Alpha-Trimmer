@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../src/AlphaTrimmer.App/UiText.cs" Link="UiText.cs" />
+    <ProjectReference Include="../../src/AlphaTrimmer.Core/AlphaTrimmer.Core.csproj" />
+    <None Include="Fixtures/*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net8.0-windows7.0": {
+      "Magick.NET-Q16-x64": {
+        "type": "Transitive",
+        "resolved": "14.17.2",
+        "contentHash": "p3baegjo+XmqxoCqxIMpE6WVh0934yM3rCDMgzLbxwgqR6ycxfJX/t3I0Gw7yqyuoc4pfemc6X7KYYXKlyq2eg==",
+        "dependencies": {
+          "Magick.NET.Core": "14.17.2"
+        }
+      },
+      "Magick.NET.Core": {
+        "type": "Transitive",
+        "resolved": "14.17.2",
+        "contentHash": "KKvR6eBUcfgkZpfHfN/UKRcK/FjHW6NXXoRRf5HJdhFk5bYLEEFuKu6op0zfNo6Msah51Yw42p599pz3A0CDQQ=="
+      },
+      "WPF-UI": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "SIHhc8lIrhEQ/1cLFZN6Dtf8cqsLm4myBULj9obnacd9TyDs2vizhKYzRzTlcPEcnzb3L4EstvPN3M6kcXbJCA==",
+        "dependencies": {
+          "WPF-UI.Abstractions": "4.3.0"
+        }
+      },
+      "WPF-UI.Abstractions": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "7Kj9DmCCo4SOCd1jAiw4+EcMFP2nR8rLLvitAYzVtzbWToTsodkbie24+8x9C4LDLxkopWEUGX62szqqNy7oeg=="
+      },
+      "alphatrimmer.core": {
+        "type": "Project",
+        "dependencies": {
+          "Magick.NET-Q16-x64": "[14.17.2, )"
+        }
+      },
+      "alpha_trimmer": {
+        "type": "Project",
+        "dependencies": {
+          "AlphaTrimmer.Core": "[2.0.0, )",
+          "WPF-UI": "[4.3.0, )"
+        }
+      }
+    },
+    "net8.0-windows7.0/win-x64": {
+      "Magick.NET-Q16-x64": {
+        "type": "Transitive",
+        "resolved": "14.17.2",
+        "contentHash": "p3baegjo+XmqxoCqxIMpE6WVh0934yM3rCDMgzLbxwgqR6ycxfJX/t3I0Gw7yqyuoc4pfemc6X7KYYXKlyq2eg==",
+        "dependencies": {
+          "Magick.NET.Core": "14.17.2"
+        }
+      }
+    }
+  }
+}

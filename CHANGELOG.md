@@ -1,0 +1,91 @@
+# 変更履歴
+
+[README](README.md) · [English](#english)
+
+## v2.0.0
+
+- PythonからC#へ移行
+
+  - Windows 11 x64向けに.NETランタイムを同梱
+
+- GUIを実装
+
+  - ファイル・フォルダー選択 / ドラッグ＆ドロップ / 範囲選択
+  - 保存先指定 / フォルダー階層保持 / サブフォルダー検索 / ファイル名による除外
+  - 処理の中断・再開 / 失敗した画像の再処理
+
+- 従来の右クリックメニューに対応
+
+  - 複数のPNG・WebPをまとめて処理
+  - 標準Windows 11では「その他のオプションを確認」内に表示
+
+- 画像の保存処理を改善
+
+  - 元画像と半透明の輪郭・影を保持
+  - 16ビットPNGに対応し、元画像と同じ形式で可逆保存
+  - 対応メタデータを保持し、EXIF・XMPの寸法を更新
+  - `-Trimmed-1`からの連番で別名保存し、上書きを回避
+
+- 表示・設定を追加
+
+  - 日本語・英語に対応し、翻訳を言語別JSONで管理
+  - ライト・ダーク / Windowsのテーマ設定への追従
+  - 設定の自動保存 / ウィンドウ位置・サイズの記憶
+
+- インストーラーを刷新
+
+  - 現在のユーザーのみ / 全ユーザーのインストールを選択
+  - v1からの移行に対応
+  - インストール範囲を変更する際に既存版を削除
+
+### 制限事項
+
+- 対応形式は静止画のPNG・WebPのみ
+- アニメーション画像とARM64版には未対応
+- WebPは保存後にサイズが増える場合あり
+- 未知のメタデータは保持できない場合あり
+
+## English
+
+### v2.0.0
+
+- Rebuilt in C#
+
+  - Bundled the .NET runtime for Windows 11 x64
+
+- Added a GUI
+
+  - File and folder selection / drag and drop / range selection
+  - Output folders / folder hierarchy / subfolder search / filename filtering
+  - Stop and resume / retry failed images
+
+- Added classic Explorer context menu support
+
+  - Process multiple PNG and WebP images together
+  - On standard Windows 11, the command appears under **Show more options**
+
+- Improved image output
+
+  - Preserve originals and partially transparent edges and shadows
+  - Support 16-bit PNG and lossless output in the original format
+  - Preserve supported metadata and update EXIF/XMP dimensions
+  - Save with sequential names starting at `-Trimmed-1` to avoid overwriting
+
+- Added display and settings options
+
+  - Japanese and English, with translations managed in language-specific JSON
+  - Light and dark themes / follow the Windows theme
+  - Automatic settings saving / window position and size persistence
+
+- Rebuilt the installer
+
+  - Choose current-user or all-user installation
+  - Migrate from v1
+  - Remove the previous installation when changing the installation scope
+
+#### Limitations
+
+- Supports static PNG and WebP images only
+- Animated images and ARM64 builds are unsupported
+- WebP output may be larger than the original
+- Unknown metadata may not be retained

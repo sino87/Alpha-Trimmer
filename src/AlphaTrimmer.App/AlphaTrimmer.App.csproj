@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>alpha_trimmer</AssemblyName>
+    <ApplicationIcon>../../Installer/icon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RuntimeFrameworkVersion>8.0.31</RuntimeFrameworkVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Using Include="System.IO" />
+    <PackageReference Include="WPF-UI" Version="4.3.0" />
+    <InternalsVisibleTo Include="AlphaTrimmer.UiTests" />
+    <ProjectReference Include="../AlphaTrimmer.Core/AlphaTrimmer.Core.csproj" />
+  </ItemGroup>
+</Project>

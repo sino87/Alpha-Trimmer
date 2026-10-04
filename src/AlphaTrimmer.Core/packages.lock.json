@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net8.0": {
+      "Magick.NET-Q16-x64": {
+        "type": "Direct",
+        "requested": "[14.17.2, )",
+        "resolved": "14.17.2",
+        "contentHash": "p3baegjo+XmqxoCqxIMpE6WVh0934yM3rCDMgzLbxwgqR6ycxfJX/t3I0Gw7yqyuoc4pfemc6X7KYYXKlyq2eg==",
+        "dependencies": {
+          "Magick.NET.Core": "14.17.2"
+        }
+      },
+      "Magick.NET.Core": {
+        "type": "Transitive",
+        "resolved": "14.17.2",
+        "contentHash": "KKvR6eBUcfgkZpfHfN/UKRcK/FjHW6NXXoRRf5HJdhFk5bYLEEFuKu6op0zfNo6Msah51Yw42p599pz3A0CDQQ=="
+      }
+    },
+    "net8.0/win-x64": {
+      "Magick.NET-Q16-x64": {
+        "type": "Direct",
+        "requested": "[14.17.2, )",
+        "resolved": "14.17.2",
+        "contentHash": "p3baegjo+XmqxoCqxIMpE6WVh0934yM3rCDMgzLbxwgqR6ycxfJX/t3I0Gw7yqyuoc4pfemc6X7KYYXKlyq2eg==",
+        "dependencies": {
+          "Magick.NET.Core": "14.17.2"
+        }
+      }
+    }
+  }
+}

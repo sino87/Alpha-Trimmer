@@ -1,24 +1,12 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-
-# PyInstaller
-*.spec
-build/
-dist/
-
-# Inno Setup
+**/bin/
+**/obj/
+artifacts/
 Installer/output/
-Installer/dist/
-Installer/配布時サムネとか
-
-# VS Code
+.vs/
 .vscode/
-
-# Environment
-.env
-venv/
-env/
-
-icon/
+*.user
+*.pfx
+*.p12
+__pycache__/
+/docs/**/*.md
+!/docs/DEVELOPMENT.md
