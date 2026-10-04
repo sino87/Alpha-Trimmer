@@ -1,54 +1,54 @@
-# 翻訳の管理
+# Localization
 
-[README](../README.md) · [開発ガイド](../docs/DEVELOPMENT.md)
+[日本語](README.ja.md) · [README](../README.md) · [Development guide](../docs/DEVELOPMENT.md)
 
-英語の`en.json`を基準とし、日本語は`ja.json`で管理します。
+`en.json` defines the English baseline. Japanese translations are in `ja.json`.
 
-## 文言の変更
+## Edit text
 
-対象JSONの`strings`を編集し、リポジトリのルートで再ビルドします。
+Edit `strings` in the relevant JSON file, then rebuild from the repository root:
 
 ```powershell
 .\scripts\Build.ps1
 ```
 
-| 接頭辞 | 表示場所 |
+| Prefix | Used in |
 | --- | --- |
-| `App.` | 起動時の案内・結果画面・ボタン |
+| `App.` | Startup messages, result dialogs, and buttons |
 | `Gui.` | GUI |
-| `Result.` | スキップ・失敗の理由 |
-| `Error.` | 独自の画像処理エラー |
-| `Shell.` | 右クリックメニュー |
-| `Installer.` | インストーラーの独自メッセージ |
+| `Result.` | Reasons for skipped or failed images |
+| `Error.` | Custom image processing errors |
+| `Shell.` | Context menu |
+| `Installer.` | Custom installer messages |
 
-メニュー名は`Shell.ContextMenuTitle`で定義し、インストーラーでも共有します。GUIの説明文は改行で項目を分け、バッククォートで囲んだ部分をインラインコード風に表示します。
+`Shell.ContextMenuTitle` defines the menu label and is also used by the installer. GUI help text uses line breaks to separate items and backticks to display text as inline code.
 
-## 言語の追加
+## Add a language
 
-1. `en.json`をコピーして言語名のファイルを作ります。フランス語なら`fr.json`です。
-2. `culture`を`fr`、`installerName`を`french`、`installerMessagesFile`を`compiler:Languages\\French.isl`に変更します。
-3. `strings`を翻訳します。未翻訳のキーは削除できますが、空文字は使えません。
-4. 再ビルドし、その言語のWindows環境で表示を確認します。
+1. Copy `en.json` to a file named for the language, such as `fr.json` for French.
+2. Set `culture` to `fr`, `installerName` to `french`, and `installerMessagesFile` to `compiler:Languages\\French.isl`.
+3. Translate `strings`. Remove untranslated keys rather than leaving empty strings.
+4. Rebuild and check the UI on Windows configured for that language.
 
-ファイル名は`culture`と一致させ、.NETが認識する言語名を使います。インストーラーの標準文言には指定した`.isl`が必要です。Inno Setupにない言語は`.isl`とビルド設定を追加します。JSONのバックスラッシュは`\\`と書きます。
+The filename must match `culture`, which must be a culture recognized by .NET. Standard installer messages require the specified `.isl` file. For languages not included in Inno Setup, add the `.isl` file and update the build configuration. Escape backslashes as `\\` in JSON.
 
-未翻訳の項目は地域固有 → 親言語 → 英語の順に探します。たとえば`fr-CA` → `fr` → `en`です。アプリ、メニュー、インストーラーの独自文言で同じ順序を使います。
+Missing translations fall back from the regional culture to its parent language, then to English. For example: `fr-CA` → `fr` → `en`. The app, context menu, and custom installer messages use the same order.
 
-## キーと使用できる文字
+## Keys and allowed characters
 
-新しいキーは先に`en.json`へ追加し、コードから参照します。他の言語は後から翻訳できます。
+Add new keys to `en.json` before referencing them in code. Other languages can be translated later.
 
-| 対象 | 制限 |
+| Scope | Restrictions |
 | --- | --- |
-| 全体 | 英語にないキー、空文言、不正な言語名はビルドエラー |
-| `Shell.` | 改行・制御文字・`{`・`}`・`%`は使用不可 |
-| `Installer.` | `\n`の改行は使用可能。その他の制御文字・`{`・`}`・`%`は使用不可 |
+| All strings | Keys absent from English, empty strings, and invalid cultures cause build errors |
+| `Shell.` | No line breaks, control characters, `{`, `}`, or `%` |
+| `Installer.` | `\n` line breaks are allowed; other control characters, `{`, `}`, and `%` are not |
 
-インストーラーの改行は生成時に`%n`へ変換します。Windowsや画像処理ライブラリのエラー詳細は、提供元の文言をそのまま表示します。
+Installer line breaks are converted to `%n` during generation. Error details from Windows and the image processing library are displayed as provided.
 
-翻訳はアプリへ埋め込み、C++ヘッダーとInno Setupの言語定義は`artifacts/localization/`に生成します。反映には再ビルド・再インストールが必要です。生成ファイルは編集しません。
+Translations are embedded in the app. C++ headers and Inno Setup language definitions are generated in `artifacts/localization/`. Rebuild and reinstall to apply changes. Do not edit generated files.
 
-## 検証
+## Verify
 
 ```powershell
 .\scripts\Test-Localization.ps1
@@ -56,4 +56,4 @@ dotnet run --project tests/AlphaTrimmer.Tests -c Release
 .\scripts\Test-Shell.ps1
 ```
 
-言語追加、フォールバック、不正文言の検出、メニューの切り替えを確認します。`Test-Shell.ps1`は記号を含む翻訳をC++へ生成して実コンパイルします。日本語を含むPowerShellスクリプトはUTF-8 BOM付きで保存します。
+These tests cover adding languages, fallback, invalid text, and menu language switching. `Test-Shell.ps1` generates C++ from translations containing symbols and compiles it. Save PowerShell scripts containing Japanese as UTF-8 with BOM.

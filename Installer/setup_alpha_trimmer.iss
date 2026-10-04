@@ -1,13 +1,16 @@
 #ifndef AppSource
   #define AppSource "..\artifacts\app"
 #endif
+#ifndef AppVersion
+  #error AppVersion must be supplied by scripts/Build.ps1
+#endif
 
 [Setup]
 AppId=Alpha Trimmer
 AppName=Alpha Trimmer
 DefaultDirName={autopf}\Alpha Trimmer
 DefaultGroupName=Alpha Trimmer
-AppVersion=2.0.0
+AppVersion={#AppVersion}
 AppPublisher=Tatsuya
 AppPublisherURL=https://github.com/sino87/Alpha-Trimmer
 AppSupportURL=https://github.com/sino87/Alpha-Trimmer/issues

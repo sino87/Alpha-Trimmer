@@ -1,31 +1,32 @@
 # Alpha Trimmer
 
-[English](README.en.md) · [変更履歴](CHANGELOG.md) · [開発ガイド](docs/DEVELOPMENT.md)
-PNG・WebP画像の透明な余白を切り取るWindows用ツールです。右クリックとGUIの両方で、複数の画像をまとめて処理できます。
+[日本語](README.ja.md) · [Changelog](CHANGELOG.md) · [Development guide](docs/DEVELOPMENT.md)
 
-![Alpha Trimmerの画面](docs/images/gui-ja.png)
+Crop transparent borders from PNG and WebP images on Windows. Process multiple images through the context menu or GUI.
 
-| 動作環境 | 対応形式 |
+![Alpha Trimmer window](docs/images/gui-en.png)
+
+| System | Supported formats |
 | --- | --- |
-| Windows 11 x64 | PNG・WebPの静止画 |
+| Windows 11 x64 | Static PNG and WebP |
 
-## インストール
+## Installation
 
-[リリースページ](https://github.com/sino87/Alpha-Trimmer/releases)からインストーラーをダウンロードして実行します。
+Download and run the installer from [Releases](https://github.com/sino87/Alpha-Trimmer/releases).
 
-## 使い方
+## Usage
 
-### 右クリック
+### Context menu
 
-画像を選択し、右クリック →「その他のオプションを確認」→「透明な余白をトリミング」を選びます。
+Select images, then right-click → **Show more options** → **Trim Transparent Pixels**.
 
 ### GUI
 
-1. スタートメニューからAlpha Trimmerを開きます。
-2. ファイルやフォルダーを追加し、「トリミング開始」を押します。ドラッグ＆ドロップでも追加できます。
+1. Open Alpha Trimmer from the Start menu.
+2. Add files or folders, then click **Start trimming**. Drag and drop is also supported.
 
-保存先の変更、サブフォルダーの検索、失敗した画像の再処理にも対応しています。「設定」では日本語・英語とライト・ダークを切り替えられます。
+You can change the output folder, include subfolders, and retry failed images. **Settings** lets you switch between Japanese and English, and light and dark themes.
 
-## ライセンス
+## License
 
-[MIT](LICENSE) · [使用ライブラリ](THIRD-PARTY-NOTICES.md)
+[MIT](LICENSE) · [Third-party notices](THIRD-PARTY-NOTICES.md)

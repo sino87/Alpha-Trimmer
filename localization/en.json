@@ -15,7 +15,7 @@
     "Result.Failed": "Processing failed. The image could not be saved.",
     "Error.TruncatedChunk": "The image file contains incomplete data.",
     "Error.UnreadableAlpha": "Could not read the image transparency.",
-    "Shell.ContextMenuTitle": "Trim transparent margins",
+    "Shell.ContextMenuTitle": "Trim Transparent Pixels",
     "Installer.MissingUninstaller": "Uninstaller not found.\nUninstall Alpha Trimmer manually.",
     "Installer.UninstallFailed": "Uninstallation failed.\nUninstall Alpha Trimmer manually, then run the installer again.",
     "Installer.UninstallIncomplete": "Could not confirm that uninstallation completed.\nRestart Windows, then run the installer again.",

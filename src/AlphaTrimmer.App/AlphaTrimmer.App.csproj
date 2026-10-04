@@ -5,7 +5,6 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>alpha_trimmer</AssemblyName>
     <ApplicationIcon>../../Installer/icon.ico</ApplicationIcon>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
     <RuntimeFrameworkVersion>8.0.31</RuntimeFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
@@ -14,4 +13,15 @@
     <InternalsVisibleTo Include="AlphaTrimmer.UiTests" />
     <ProjectReference Include="../AlphaTrimmer.Core/AlphaTrimmer.Core.csproj" />
   </ItemGroup>
+  <Target Name="GenerateAppManifest" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ApplicationManifest>$(IntermediateOutputPath)app.manifest</ApplicationManifest>
+    </PropertyGroup>
+    <MakeDir Directories="$(IntermediateOutputPath)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)/app.manifest.template" DestinationFiles="$(ApplicationManifest)" />
+    <XmlPoke XmlInputPath="$(ApplicationManifest)"
+      Query="/asm:assembly/asm:assemblyIdentity/@version"
+      Namespaces="&lt;Namespace Prefix='asm' Uri='urn:schemas-microsoft-com:asm.v1' /&gt;"
+      Value="$(Version).0" />
+  </Target>
 </Project>

@@ -1,26 +1,29 @@
-﻿function Get-ReleaseMetadata([string]$ProjectRoot) {
+﻿function Get-AppVersion([string]$ProjectRoot) {
     [xml]$properties = Get-Content -LiteralPath (Join-Path $ProjectRoot 'Directory.Build.props') -Raw
     $versions = @($properties.Project.PropertyGroup.Version | Where-Object { $_ })
     if ($versions.Count -ne 1 -or $versions[0] -notmatch '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$') {
         throw 'アプリのバージョン定義が不正です。'
     }
-    $version = [string]$versions[0]
-    $installer = Get-Content -LiteralPath (Join-Path $ProjectRoot 'Installer/setup_alpha_trimmer.iss') -Raw
-    $installerVersions = [regex]::Matches($installer, '(?m)^AppVersion=([^\r\n]+)\r?$')
-    if ($installerVersions.Count -ne 1 -or $installerVersions[0].Groups[1].Value -cne $version) {
-        throw 'アプリとインストーラーのバージョンが一致しません。'
-    }
-    $changelog = Get-Content -LiteralPath (Join-Path $ProjectRoot 'CHANGELOG.md') -Raw -Encoding UTF8
+    return [string]$versions[0]
+}
+
+function Get-ReleaseMetadata([string]$ProjectRoot) {
+    $version = Get-AppVersion $ProjectRoot
     $tag = 'v' + $version
     $escaped = [regex]::Escape($tag)
-    $japanese = [regex]::Matches($changelog, '(?ms)^## ' + $escaped + '\r?\n(.*?)(?=^## |\z)')
-    $englishSection = [regex]::Match($changelog, '(?ms)^## English\r?\n(.*)\z')
-    $english = [regex]::Matches($englishSection.Groups[1].Value, '(?ms)^### ' + $escaped + '\r?\n(.*?)(?=^### (?!#)|\z)')
-    if ($japanese.Count -ne 1 -or $english.Count -ne 1 -or
-        [string]::IsNullOrWhiteSpace($japanese[0].Groups[1].Value) -or [string]::IsNullOrWhiteSpace($english[0].Groups[1].Value)) {
-        throw '該当バージョンの日英の変更履歴が見つからないか重複しています。'
+    $notes = @{}
+    foreach ($language in @('en', 'ja')) {
+        $file = if ($language -eq 'en') { 'CHANGELOG.md' } else { 'CHANGELOG.ja.md' }
+        $path = Join-Path $ProjectRoot $file
+        if (!(Test-Path -LiteralPath $path)) { throw '該当バージョンの変更履歴が見つからないか重複しています。' }
+        $changelog = Get-Content -LiteralPath $path -Raw -Encoding UTF8
+        $sections = [regex]::Matches($changelog, '(?ms)^## ' + $escaped + '\r?\n(.*?)(?=^## |\z)')
+        if ($sections.Count -ne 1 -or [string]::IsNullOrWhiteSpace($sections[0].Groups[1].Value)) {
+            throw '該当バージョンの変更履歴が見つからないか重複しています。'
+        }
+        $notes[$language] = $sections[0].Groups[1].Value.Trim()
     }
-    [pscustomobject]@{ Version = $version; Tag = $tag; Notes = $japanese[0].Groups[1].Value.Trim() + "`n`n## English`n`n" + $english[0].Groups[1].Value.Trim() + "`n" }
+    [pscustomobject]@{ Version = $version; Tag = $tag; Notes = $notes.en + "`n`n## 日本語`n`n" + $notes.ja + "`n" }
 }
 
 function Invoke-ReleaseApi([string]$Repository, [string]$Path, [string]$Method = 'GET', $Body = $null, [switch]$AllowMissing) {
@@ -41,11 +44,23 @@ function Invoke-ReleaseApi([string]$Repository, [string]$Path, [string]$Method =
     }
 }
 
-function Get-RepositoryReleaseState([string]$Repository, [string]$Tag, [string]$Commit) {
+function Get-RepositoryReleaseState([string]$Repository, [string]$Tag, [string]$Commit, [switch]$IncludeDrafts) {
     if ($Repository -notmatch '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$' -or $Commit -notmatch '^[0-9a-f]{40}$' -or $Tag -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+$') {
         throw 'リポジトリ、タグ、コミットの指定が不正です。'
     }
     $release = Invoke-ReleaseApi $Repository "releases/tags/$Tag" -AllowMissing
+    if ($IncludeDrafts -and $null -eq $release) {
+        for ($page = 1; ; $page++) {
+            $releases = @(Invoke-ReleaseApi $Repository "releases?per_page=100&page=$page")
+            $matching = @($releases | Where-Object { $_.tag_name -ceq $Tag })
+            if ($matching.Count -gt 1) { throw '同じタグのリリースが重複しています。' }
+            if ($matching.Count -eq 1) {
+                $release = $matching[0]
+                break
+            }
+            if ($releases.Count -lt 100) { break }
+        }
+    }
     if ($null -ne $release -and !$release.draft) { throw 'このバージョンは公開済みです。更新を中止しました。' }
     $reference = Invoke-ReleaseApi $Repository "git/ref/tags/$Tag" -AllowMissing
     if ($null -ne $reference) {

@@ -8,7 +8,7 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 . (Join-Path $PSScriptRoot 'ReleaseFunctions.ps1')
 $metadata = Get-ReleaseMetadata $projectRoot
-$state = Get-RepositoryReleaseState $Repository $metadata.Tag $Commit
+$state = Get-RepositoryReleaseState $Repository $metadata.Tag $Commit -IncludeDrafts:(!$CheckOnly)
 if ($CheckOnly) {
     if ($env:GITHUB_OUTPUT) {
         Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value @("version=$($metadata.Version)", "tag=$($metadata.Tag)") -Encoding UTF8
@@ -37,7 +37,7 @@ if ($null -eq $state.Release) {
 else {
     $release = Invoke-ReleaseApi $Repository ("releases/" + $state.Release.id) 'PATCH' $body
 }
-$null = Get-RepositoryReleaseState $Repository $metadata.Tag $Commit
+$null = Get-RepositoryReleaseState $Repository $metadata.Tag $Commit -IncludeDrafts
 & gh release upload $metadata.Tag @assets --repo $Repository --clobber
 if ($LASTEXITCODE -ne 0) { throw '下書きへのファイル添付に失敗しました。' }
 Write-Output "リリース下書きを更新しました: $($release.html_url)"

@@ -6,6 +6,8 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 Push-Location $projectRoot
 try {
+    . (Join-Path $PSScriptRoot 'ReleaseFunctions.ps1')
+    $appVersion = Get-AppVersion $projectRoot
     & (Join-Path $PSScriptRoot 'Generate-Localization.ps1')
     if (!$SkipTests) {
         & (Join-Path $PSScriptRoot 'Test-Release.ps1')
@@ -34,7 +36,7 @@ try {
     Copy-Item -LiteralPath Installer/icon.ico -Destination $outputPath
     Copy-Item -LiteralPath licenses -Destination $outputPath -Recurse -Force
     $iscc = Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6/ISCC.exe'
-    $compileArguments = @("/DAppSource=$outputPath")
+    $compileArguments = @("/DAppSource=$outputPath", "/DAppVersion=$appVersion")
     & $iscc @compileArguments Installer/setup_alpha_trimmer.iss
     if ($LASTEXITCODE -ne 0) { throw 'インストーラーのビルドに失敗しました。' }
 } finally {

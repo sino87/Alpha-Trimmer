@@ -8,17 +8,17 @@
 int wmain(int argc, wchar_t** argv)
 {
     if (argc < 3) return 2;
-    if (wcscmp(MenuTitleForLocale(L"ja-JP"), L"透明な余白をトリミング") != 0 ||
-        wcscmp(MenuTitleForLocale(L"en-US"), L"Trim transparent margins") != 0 ||
-        wcscmp(MenuTitleForLocale(L""), L"Trim transparent margins") != 0) return 13;
+    if (wcscmp(MenuTitleForLocale(L"ja-JP"), L"透明ピクセルをトリミング") != 0 ||
+        wcscmp(MenuTitleForLocale(L"en-US"), L"Trim Transparent Pixels") != 0 ||
+        wcscmp(MenuTitleForLocale(L""), L"Trim Transparent Pixels") != 0) return 13;
     std::wcout << L"PASS: menu language selection and English fallback\n";
     std::wstring settings = std::wstring(argv[1]) + L".language-test.ini";
     if (!WritePrivateProfileStringW(L"Preferences", L"Language", L"ja", settings.c_str()) ||
-        wcscmp(MenuTitleForSettings(settings, L"en-US"), L"透明な余白をトリミング") != 0) return 14;
+        wcscmp(MenuTitleForSettings(settings, L"en-US"), L"透明ピクセルをトリミング") != 0) return 14;
     if (!WritePrivateProfileStringW(L"Preferences", L"Language", L"en", settings.c_str()) ||
-        wcscmp(MenuTitleForSettings(settings, L"ja-JP"), L"Trim transparent margins") != 0) return 15;
+        wcscmp(MenuTitleForSettings(settings, L"ja-JP"), L"Trim Transparent Pixels") != 0) return 15;
     if (!WritePrivateProfileStringW(L"Preferences", L"Language", L"", settings.c_str()) ||
-        wcscmp(MenuTitleForSettings(settings, L"ja-JP"), L"透明な余白をトリミング") != 0) return 16;
+        wcscmp(MenuTitleForSettings(settings, L"ja-JP"), L"透明ピクセルをトリミング") != 0) return 16;
     DeleteFileW(settings.c_str());
     std::wcout << L"PASS: shared preferences override menu language and follow system\n";
     HRESULT result = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
