@@ -21,7 +21,7 @@ Download and run the installer from [Releases](https://github.com/sino87/Alpha-T
 
 Select images, then right-click > `Show more options` > `Trim Transparent Pixels`.
 
-[Watch the tutorial](docs/images/tut-1.mp4)
+https://github.com/user-attachments/assets/b457c35c-4ac3-4aa6-8302-d5883ee0f63a
 
 ### GUI
 
