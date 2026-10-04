@@ -10,7 +10,7 @@ $testExecutable = Join-Path $testDirectory 'InstallerPolicyTest.exe'
 $process = Start-Process -FilePath $testExecutable -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', ('/result="' + $resultPath + '"')) -WindowStyle Hidden -Wait -PassThru
 if (!(Test-Path -LiteralPath $resultPath)) { throw "移行ポリシーの検証に失敗しました: $($process.ExitCode)" }
 $result = Get-Content -LiteralPath $resultPath -Raw
-if ($result -ne 'PASS: 8 migration policies') { throw '移行ポリシーの検証結果が不正です。' }
+if ($result -ne 'PASS: 8 migration policies, 5 shell update policies') { throw '移行ポリシーの検証結果が不正です。' }
 Write-Output $result
 
 $artifactsRoot = [IO.Path]::GetFullPath((Join-Path $projectRoot 'artifacts')) + [IO.Path]::DirectorySeparatorChar

@@ -11,17 +11,17 @@ $metadata = Get-ReleaseMetadata $projectRoot
 $state = Get-RepositoryReleaseState $Repository $metadata.Tag $Commit -IncludeDrafts:(!$CheckOnly)
 if ($CheckOnly) {
     if ($env:GITHUB_OUTPUT) {
-        Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value @("version=$($metadata.Version)", "tag=$($metadata.Tag)") -Encoding UTF8
+        Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value @("version=$($metadata.Version)", "tag=$($metadata.Tag)", "installer=$($metadata.InstallerFileName)") -Encoding UTF8
     }
     Write-Output "リリース条件を確認しました: $($metadata.Tag)"
     return
 }
 $releaseDirectory = Join-Path $projectRoot 'artifacts/release'
-$assets = @('Alpha_Trimmer_Setup.exe', 'SHA256SUMS.txt', 'provenance.sigstore.json') | ForEach-Object { Join-Path $releaseDirectory $_ }
+$assets = @($metadata.InstallerFileName, 'SHA256SUMS.txt', 'provenance.sigstore.json') | ForEach-Object { Join-Path $releaseDirectory $_ }
 foreach ($asset in $assets) {
     if (!(Test-Path -LiteralPath $asset -PathType Leaf)) { throw "配布ファイルがありません: $asset" }
 }
-$expectedChecksum = (Get-FileHash -LiteralPath $assets[0] -Algorithm SHA256).Hash.ToLowerInvariant() + '  Alpha_Trimmer_Setup.exe'
+$expectedChecksum = (Get-FileHash -LiteralPath $assets[0] -Algorithm SHA256).Hash.ToLowerInvariant() + '  ' + $metadata.InstallerFileName
 if ((Get-Content -LiteralPath $assets[1] -Raw).Trim() -cne $expectedChecksum) { throw 'インストーラーとSHA-256が一致しません。' }
 if (!$state.TagExists) {
     $null = Invoke-ReleaseApi $Repository 'git/refs' 'POST' @{ ref = "refs/tags/$($metadata.Tag)"; sha = $Commit }

@@ -23,7 +23,7 @@ function Get-ReleaseMetadata([string]$ProjectRoot) {
         }
         $notes[$language] = $sections[0].Groups[1].Value.Trim()
     }
-    [pscustomobject]@{ Version = $version; Tag = $tag; Notes = $notes.en + "`n`n## 日本語`n`n" + $notes.ja + "`n" }
+    [pscustomobject]@{ Version = $version; Tag = $tag; InstallerFileName = "Alpha_Trimmer_Setup-$tag.exe"; Notes = $notes.en + "`n`n## 日本語`n`n" + $notes.ja + "`n" }
 }
 
 function Invoke-ReleaseApi([string]$Repository, [string]$Path, [string]$Method = 'GET', $Body = $null, [switch]$AllowMissing) {

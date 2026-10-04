@@ -31,8 +31,10 @@
 
 | 出力 | 保存先 |
 | --- | --- |
-| インストーラー | `Installer/output/Alpha_Trimmer_Setup.exe` |
+| インストーラー | `Installer/output/Alpha_Trimmer_Setup-v<version>.exe` |
 | アプリ | `artifacts/app/` |
+
+インストーラーはシェルDLLをSHA-256付きのファイル名で配置し、自動終了の対象から除外します。同じ内容のDLLは上書きしません。既存の登録先が変わる場合はWindowsの再起動を案内します。使用中の旧DLLは残し、後のインストール時に削除を試みます。
 
 ## GitHub Actions
 
@@ -44,8 +46,10 @@
 
 配布ファイルの出所はGitHub CLIで確認できます。
 
+ファイル名はダウンロードしたインストーラーに合わせます。v2.0.0の場合は次のとおりです。
+
 ```powershell
-gh attestation verify Alpha_Trimmer_Setup.exe --repo sino87/Alpha-Trimmer
+gh attestation verify Alpha_Trimmer_Setup-v2.0.0.exe --repo sino87/Alpha-Trimmer
 ```
 
 ## 起動
@@ -72,7 +76,7 @@ dotnet run --project tests/AlphaTrimmer.UiTests -c Release -- artifacts/gui-test
 | --- | --- |
 | Core | 画像処理・設定 |
 | UI | 実際のWPF画面と描画画像 |
-| Installer | Inno Setupの移行条件。インストールは行わない |
+| Installer | Inno Setupの移行条件・シェル更新時の再起動条件。インストールは行わない |
 | Localization | 言語追加・未翻訳時の代替言語・不正文言の検出 |
 | Shell | DLLから配布用EXEへの複数画像受け渡し。レジストリ登録・Explorer表示は対象外 |
 | Release | バージョン・変更履歴の整合性と、タグ・リリースの更新条件 |

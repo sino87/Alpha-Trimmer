@@ -31,8 +31,10 @@ After building, run `.\scripts\Test-Shell.ps1` to test the shell extension. GitH
 
 | Output | Location |
 | --- | --- |
-| Installer | `Installer/output/Alpha_Trimmer_Setup.exe` |
+| Installer | `Installer/output/Alpha_Trimmer_Setup-v<version>.exe` |
 | App | `artifacts/app/` |
+
+The installer stores the shell DLL under a filename containing its SHA-256 hash. It excludes shell DLLs from automatic application closing and reuses identical files without overwriting them. Changing an existing shell registration prompts for a Windows restart. Old DLLs still in use are kept until a later installation can remove them.
 
 ## GitHub Actions
 
@@ -44,8 +46,10 @@ Update only `<Version>` in `Directory.Build.props` to change the version. The ap
 
 Verify the installer's provenance with GitHub CLI:
 
+Use the filename of the downloaded installer. For v2.0.0:
+
 ```powershell
-gh attestation verify Alpha_Trimmer_Setup.exe --repo sino87/Alpha-Trimmer
+gh attestation verify Alpha_Trimmer_Setup-v2.0.0.exe --repo sino87/Alpha-Trimmer
 ```
 
 ## Run
@@ -72,7 +76,7 @@ dotnet run --project tests/AlphaTrimmer.UiTests -c Release -- artifacts/gui-test
 | --- | --- |
 | Core | Image processing and settings |
 | UI | Actual WPF windows and rendered screenshots |
-| Installer | Inno Setup migration conditions; does not install the app |
+| Installer | Inno Setup migration and shell restart conditions; does not install the app |
 | Localization | Adding languages, fallback, and validation of translated strings |
 | Shell | Passing multiple images from the DLL to the published EXE; excludes registry registration and Explorer display |
 | Release | Versions, release notes, and rules for updating tags and releases |

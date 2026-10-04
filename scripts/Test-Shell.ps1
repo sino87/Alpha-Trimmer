@@ -1,4 +1,8 @@
-﻿$ErrorActionPreference = 'Stop'
+﻿param(
+    [string]$ShellLibraryName = 'AlphaTrimmer.Shell.dll'
+)
+
+$ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
 $visualStudio = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
@@ -20,7 +24,7 @@ try {
     Copy-Item -LiteralPath tests/AlphaTrimmer.Tests/Fixtures/rgba.webp -Destination $webp
     $pngHash = (Get-FileHash -LiteralPath $png).Hash
     $webpHash = (Get-FileHash -LiteralPath $webp).Hash
-    & $harness (Join-Path $artifacts 'app/AlphaTrimmer.Shell.dll') $png $webp
+    & $harness (Join-Path (Join-Path $artifacts 'app') $ShellLibraryName) $png $webp
     if ($LASTEXITCODE -ne 0) { throw "右クリック拡張の呼び出しに失敗しました: $LASTEXITCODE" }
     $pngOutput = Join-Path $testDirectory '画像 sample-Trimmed-1.png'
     $webpOutput = Join-Path $testDirectory '画像 sample-Trimmed-1.webp'

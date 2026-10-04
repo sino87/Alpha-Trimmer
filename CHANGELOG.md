@@ -37,6 +37,7 @@
   - Choose current-user or all-user installation
   - Migrate from v1
   - Remove the previous installation when changing the installation scope
+  - Update the shell extension without automatically closing Explorer
 
 ### Limitations
 

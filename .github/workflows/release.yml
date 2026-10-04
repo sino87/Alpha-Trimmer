@@ -35,6 +35,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Check release conditions
+        id: metadata
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_REPOSITORY: ${{ github.repository }}
@@ -51,16 +52,18 @@ jobs:
           & ./scripts/Build.ps1 *>&1 | Tee-Object artifacts/build.log
           & ./scripts/Test-Shell.ps1 *>&1 | Tee-Object artifacts/shell.log
       - name: Prepare files
+        env:
+          INSTALLER_NAME: ${{ steps.metadata.outputs.installer }}
         run: |
           New-Item -ItemType Directory -Force artifacts/release | Out-Null
-          Copy-Item Installer/output/Alpha_Trimmer_Setup.exe artifacts/release/
-          $hash = (Get-FileHash artifacts/release/Alpha_Trimmer_Setup.exe -Algorithm SHA256).Hash.ToLowerInvariant()
-          [IO.File]::WriteAllText((Join-Path $PWD 'artifacts/release/SHA256SUMS.txt'), "$hash  Alpha_Trimmer_Setup.exe`n", [Text.UTF8Encoding]::new($false))
+          Copy-Item -LiteralPath (Join-Path 'Installer/output' $env:INSTALLER_NAME) -Destination artifacts/release/
+          $hash = (Get-FileHash -LiteralPath (Join-Path 'artifacts/release' $env:INSTALLER_NAME) -Algorithm SHA256).Hash.ToLowerInvariant()
+          [IO.File]::WriteAllText((Join-Path $PWD 'artifacts/release/SHA256SUMS.txt'), "$hash  $($env:INSTALLER_NAME)`n", [Text.UTF8Encoding]::new($false))
       - name: Attest installer provenance
         id: attest
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
         with:
-          subject-path: artifacts/release/Alpha_Trimmer_Setup.exe
+          subject-path: artifacts/release/${{ steps.metadata.outputs.installer }}
       - name: Save provenance bundle
         env:
           BUNDLE_PATH: ${{ steps.attest.outputs.bundle-path }}

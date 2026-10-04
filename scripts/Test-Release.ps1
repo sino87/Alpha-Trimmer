@@ -29,10 +29,18 @@ $japaneseChangelog = "# 変更履歴`n`n## v2.0.0`n`n- 日本語の変更`n`n###
 [IO.File]::WriteAllText((Join-Path $testRoot 'CHANGELOG.ja.md'), $japaneseChangelog, $encoding)
 $metadata = Get-ReleaseMetadata $testRoot
 Assert ($metadata.Version -eq '2.0.0' -and $metadata.Tag -eq 'v2.0.0') 'コードからバージョンとタグを取得'
+Assert ($metadata.InstallerFileName -eq 'Alpha_Trimmer_Setup-v2.0.0.exe') '配布ファイル名にバージョンを付ける'
 Assert ($metadata.Notes.Contains('日本語の変更') -and $metadata.Notes.Contains('English change') -and $metadata.Notes.Contains('Limitation') -and !$metadata.Notes.Contains('古い日本語') -and !$metadata.Notes.Contains('Old English')) '該当バージョンの日英と制限事項だけを抽出'
 Assert ($metadata.Notes.StartsWith('- English change') -and $metadata.Notes.IndexOf('English change') -lt $metadata.Notes.IndexOf('日本語の変更')) '英語を先に表示'
 [IO.File]::WriteAllText((Join-Path $testRoot 'CHANGELOG.ja.md'), $japaneseChangelog.Replace('## v2.0.0', '## v2.0.1'), $encoding)
 Assert-Rejected { Get-ReleaseMetadata $testRoot } '変更履歴が見つからない'
+[IO.File]::WriteAllText((Join-Path $testRoot 'CHANGELOG.md'), $changelog.Replace('## v2.0.0', '## v2.0.1'), $encoding)
+[IO.File]::WriteAllText((Join-Path $testRoot 'CHANGELOG.ja.md'), $japaneseChangelog.Replace('## v2.0.0', '## v2.0.1'), $encoding)
+[IO.File]::WriteAllText((Join-Path $testRoot 'Directory.Build.props'), '<Project><PropertyGroup><Version>2.0.1</Version></PropertyGroup></Project>', $encoding)
+Assert ((Get-ReleaseMetadata $testRoot).InstallerFileName -eq 'Alpha_Trimmer_Setup-v2.0.1.exe') 'バージョン変更を配布ファイル名へ反映'
+[IO.File]::WriteAllText((Join-Path $testRoot 'CHANGELOG.md'), $changelog, $encoding)
+[IO.File]::WriteAllText((Join-Path $testRoot 'CHANGELOG.ja.md'), $japaneseChangelog, $encoding)
+[IO.File]::WriteAllText((Join-Path $testRoot 'Directory.Build.props'), '<Project><PropertyGroup><Version>2.0.0</Version></PropertyGroup></Project>', $encoding)
 [IO.File]::WriteAllText((Join-Path $testRoot 'CHANGELOG.ja.md'), $japaneseChangelog.Replace('## v1.0.0', '## v2.0.0'), $encoding)
 Assert-Rejected { Get-ReleaseMetadata $testRoot } '重複しています'
 Remove-Item -LiteralPath (Join-Path $testRoot 'CHANGELOG.ja.md')
